@@ -1,1 +1,5 @@
-alert("hello from browse.js")
+addEventListener("click", function(e) { 
+  if(e.target.classList.contains("edit-me")) { 
+    alert("you clicked the edit btn")
+  }
+})
