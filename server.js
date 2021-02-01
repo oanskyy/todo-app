@@ -1,15 +1,32 @@
 let express = require("express")
+let mongodb = require("mongodb")
 
 let app = express()
+let db
 
-app.use(express.urlencoded({extended: false}))
+// a - a connection string
+let connectionString =
+  "mongodb+srv://mainUser:50cent@cluster0.psqep.mongodb.net/TodoApp?retryWrites=true&w=majority"
+mongodb.connect(
+  connectionString,
+  { useNewUrlParser: true, useUnifiedTopology: true },
+  function (err, client) {
+    db = client.db()
+    app.listen(3000)
+  }
+)
 
-// tell our app to begin listening for incoming requests 
+app.use(express.urlencoded({ extended: false }))
+
+// tell our app to begin listening for incoming requests
 
 // 2nd argument should be a function that runs when this request happens
 // annonymus function
-app.get('/', function(req,res){ 
-  res.send(`<!DOCTYPE html>
+app.get("/", function (req, res) {
+  db.collection("items")
+    .find()
+    .toArray(function (err, items) {
+      res.send(`<!DOCTYPE html>
   <html>
   <head>
     <meta charset="UTF-8">
@@ -31,40 +48,30 @@ app.get('/', function(req,res){
       </div>
       
       <ul class="list-group pb-5">
-        <li class="list-group-item list-group-item-action d-flex align-items-center justify-content-between">
-          <span class="item-text">Fake example item #1</span>
+        ${items.map(function(item) { 
+          return `<li class="list-group-item list-group-item-action d-flex align-items-center justify-content-between">
+          <span class="item-text">${item.text}</span>
           <div>
             <button class="edit-me btn btn-secondary btn-sm mr-1">Edit</button>
             <button class="delete-me btn btn-danger btn-sm">Delete</button>
           </div>
-        </li>
-        <li class="list-group-item list-group-item-action d-flex align-items-center justify-content-between">
-          <span class="item-text">Fake example item #2</span>
-          <div>
-            <button class="edit-me btn btn-secondary btn-sm mr-1">Edit</button>
-            <button class="delete-me btn btn-danger btn-sm">Delete</button>
-          </div>
-        </li>
-        <li class="list-group-item list-group-item-action d-flex align-items-center justify-content-between">
-          <span class="item-text">Fake example item #3</span>
-          <div>
-            <button class="edit-me btn btn-secondary btn-sm mr-1">Edit</button>
-            <button class="delete-me btn btn-danger btn-sm">Delete</button>
-          </div>
-        </li>
+        </li>` 
+        }).join('')}
+        
       </ul>
       
     </div>
     
   </body>
   </html>`)
+    })
 })
 
 // a. when the web browser sends a POST request to this url /create-item, b. what do we want it to do
-          // a.       , b.
-app.post('/create-item', function(req, res) { 
-  console.log(req.body.item)
-  res.send("thanks for submitting the form")
+// a.       , b.
+// this section of code where we respond to incoming POST http request to this URL '/create-item'
+app.post("/create-item", function (req, res) {
+  db.collection("items").insertOne({ text: req.body.item }, function () {
+    res.send("Thanks for submitting the form")
+  })
 })
-
-app.listen(3000)
