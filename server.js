@@ -4,7 +4,7 @@ let mongodb = require("mongodb")
 let app = express()
 let db
 
-app.use(express.static('public'))
+app.use(express.static("public"))
 
 // a - a connection string
 let connectionString =
@@ -18,10 +18,10 @@ mongodb.connect(
   }
 )
 
+app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 
 // tell our app to begin listening for incoming requests
-
 // 2nd argument should be a function that runs when this request happens
 // annonymus function
 app.get("/", function (req, res) {
@@ -55,7 +55,7 @@ app.get("/", function (req, res) {
             return `<li class="list-group-item list-group-item-action d-flex align-items-center justify-content-between">
           <span class="item-text">${item.text}</span>
           <div>
-            <button class="edit-me btn btn-secondary btn-sm mr-1">Edit</button>
+            <button data-id="${item._id}" class="edit-me btn btn-secondary btn-sm mr-1">Edit</button>
             <button class="delete-me btn btn-danger btn-sm">Delete</button>
           </div>
         </li>`
@@ -65,6 +65,7 @@ app.get("/", function (req, res) {
       </ul>
     </div>
 
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
   <script src="/browser.js"></script>
   </body>
   </html>`)
@@ -77,5 +78,11 @@ app.get("/", function (req, res) {
 app.post("/create-item", function (req, res) {
   db.collection("items").insertOne({ text: req.body.item }, function () {
     res.redirect("/")
+  })
+})
+
+app.post("/update-item", function (req, res) {
+  db.collection('items').findOneAndUpdate({_id: new mongodb.ObjectId(req.body.id)}, {$set: {text: req.body.text}}, function() { 
+
   })
 })
