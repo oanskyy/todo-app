@@ -48,15 +48,17 @@ app.get("/", function (req, res) {
       </div>
       
       <ul class="list-group pb-5">
-        ${items.map(function(item) { 
-          return `<li class="list-group-item list-group-item-action d-flex align-items-center justify-content-between">
+        ${items
+          .map(function (item) {
+            return `<li class="list-group-item list-group-item-action d-flex align-items-center justify-content-between">
           <span class="item-text">${item.text}</span>
           <div>
             <button class="edit-me btn btn-secondary btn-sm mr-1">Edit</button>
             <button class="delete-me btn btn-danger btn-sm">Delete</button>
           </div>
-        </li>` 
-        }).join('')}
+        </li>`
+          })
+          .join("")}
         
       </ul>
       
@@ -72,6 +74,6 @@ app.get("/", function (req, res) {
 // this section of code where we respond to incoming POST http request to this URL '/create-item'
 app.post("/create-item", function (req, res) {
   db.collection("items").insertOne({ text: req.body.item }, function () {
-    res.send("Thanks for submitting the form")
+    res.redirect("/")
   })
 })
