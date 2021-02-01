@@ -4,6 +4,8 @@ let mongodb = require("mongodb")
 let app = express()
 let db
 
+app.use(express.static('public'))
+
 // a - a connection string
 let connectionString =
   "mongodb+srv://mainUser:50cent@cluster0.psqep.mongodb.net/TodoApp?retryWrites=true&w=majority"
@@ -61,9 +63,9 @@ app.get("/", function (req, res) {
           .join("")}
         
       </ul>
-      
     </div>
-    
+
+  <script src="/browser.js"></script>
   </body>
   </html>`)
     })
