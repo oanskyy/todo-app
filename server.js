@@ -76,8 +76,8 @@ app.get("/", function (req, res) {
 // a.       , b.
 // this section of code where we respond to incoming POST http request to this URL '/create-item'
 app.post("/create-item", function (req, res) {
-  db.collection("items").insertOne({ text: req.body.item }, function () {
-    res.redirect("/")
+  db.collection("items").insertOne({ text: req.body.text }, function () {
+    res.send("success")
   })
 })
 
