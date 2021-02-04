@@ -1,4 +1,23 @@
 addEventListener("click", function (e) {
+  // Delete feature
+  if (e.target.classList.contains("delete-me")) { 
+    if(confirm("Do you want to permanently delete this item?")) {
+      axios
+      .post("/delete-item", {
+        id: e.target.getAttribute("data-id")
+      })
+      .then(function () {
+        e.target.parentElement.parentElement.remove()
+      })
+      .catch(function () {
+        console.log("Pls try again later.")
+      })
+    }
+    
+  }
+
+
+  // Update feature
   if (e.target.classList.contains("edit-me")) {
     let userInput = prompt(
       "enter your new text",
