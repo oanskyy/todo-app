@@ -82,7 +82,18 @@ app.post("/create-item", function (req, res) {
 })
 
 app.post("/update-item", function (req, res) {
-  db.collection('items').findOneAndUpdate({_id: new mongodb.ObjectId(req.body.id)}, {$set: {text: req.body.text}}, function() { 
+  db.collection("items").findOneAndUpdate(
+    { _id: new mongodb.ObjectId(req.body.id) },
+    { $set: { text: req.body.text } },
+    function () {}
+  )
+})
 
-  })
+app.post("/delete-item", function (req, res) {
+  db.collection("items").deleteOne(
+    { _id: new mongodb.ObjectId(req.body.id) },
+    function () {
+      res.send("Success")
+    }
+  )
 })
