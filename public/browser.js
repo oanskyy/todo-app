@@ -1,4 +1,26 @@
 addEventListener("click", function (e) {
+  // Create feature 
+
+  let createField = document.getElementById("create-field")
+  document.getElementById("create-form").addEventListener( "submit", function(e) { 
+    // prevent the default behaviour of the web browser
+    e.preventDefault()
+    axios
+      .post("/create-item", {
+        text: x
+      })
+      .then(function () {
+        // create the html for a new item
+        alert('new item created')
+      })
+      .catch(function () {
+        console.log("Pls try again later.")
+      })
+  })
+
+
+
+
   // Delete feature
   if (e.target.classList.contains("delete-me")) { 
     if(confirm("Do you want to permanently delete this item?")) {
