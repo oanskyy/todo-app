@@ -6,12 +6,11 @@ let db
 
 app.use(express.static("public"))
 
-// a - a connection string
 let connectionString =
   "mongodb+srv://mainUser:50cent@cluster0.psqep.mongodb.net/TodoApp?retryWrites=true&w=majority"
 mongodb.connect(
   connectionString,
-  { useNewUrlParser: true, useUnifiedTopology: true },
+  {useNewUrlParser: true, useUnifiedTopology: true },
   function (err, client) {
     db = client.db()
     app.listen(3000)
@@ -51,7 +50,7 @@ app.get("/", function (req, res) {
       
       <ul id="item-list" class="list-group pb-5">
         ${items
-          .map(function (item) {
+          .map(function(item) {
             return `<li class="list-group-item list-group-item-action d-flex align-items-center justify-content-between">
           <span class="item-text">${item.text}</span>
           <div>
@@ -76,8 +75,9 @@ app.get("/", function (req, res) {
 // a.       , b.
 // this section of code where we respond to incoming POST http request to this URL '/create-item'
 app.post("/create-item", function (req, res) {
-  db.collection("items").insertOne({ text: req.body.text }, function () {
-    res.send("success")
+  db.collection("items").insertOne({ text: req.body.text}, function (err, info) {
+    // json-javascript object notation - a very popular way to send data back and forward. And our goal here is to: send back a JS Obj that represents the new mongo DB document that was just created
+    res.json(info.ops[0])
   })
 })
 
@@ -85,8 +85,9 @@ app.post("/update-item", function (req, res) {
   db.collection("items").findOneAndUpdate(
     { _id: new mongodb.ObjectId(req.body.id) },
     { $set: { text: req.body.text } },
-    function () {}
-  )
+    function () {
+      res.send("Success")
+    })
 })
 
 app.post("/delete-item", function (req, res) {
