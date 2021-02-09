@@ -10,7 +10,7 @@ let connectionString =
   "mongodb+srv://mainUser:50cent@cluster0.psqep.mongodb.net/TodoApp?retryWrites=true&w=majority"
 mongodb.connect(
   connectionString,
-  {useNewUrlParser: true, useUnifiedTopology: true },
+  { useNewUrlParser: true, useUnifiedTopology: true },
   function (err, client) {
     db = client.db()
     app.listen(3000)
@@ -19,6 +19,17 @@ mongodb.connect(
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
+
+
+function passwordProtected(req, res, next) { 
+  res.set('WWW-Authenticate', 'Basic realm = "Simple Todo App"')
+  console.log(req.headers.authorization)
+  if(req.headers.authorization == "Basic bGVhcm46amF2YXNjcmlwdA==") { 
+    next()
+  } else { 
+    res.status(401).send("Authentication required")
+  }
+}
 
 // tell our app to begin listening for incoming requests
 // 2nd argument should be a function that runs when this request happens
@@ -49,21 +60,15 @@ app.get("/", function (req, res) {
       </div>
       
       <ul id="item-list" class="list-group pb-5">
-        ${items
-          .map(function(item) {
-            return `<li class="list-group-item list-group-item-action d-flex align-items-center justify-content-between">
-          <span class="item-text">${item.text}</span>
-          <div>
-            <button data-id="${item._id}" class="edit-me btn btn-secondary btn-sm mr-1">Edit</button>
-            <button data-id="${item._id}" class="delete-me btn btn-danger btn-sm">Delete</button>
-          </div>
-        </li>`
-          })
-          .join("")}
+        
         
       </ul>
     </div>
 
+  <script>
+          // JSON -popular way of sending data back and forth
+          let items= ${JSON.stringify(items)}
+  </script>  
   <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
   <script src="/browser.js"></script>
   </body>
@@ -75,7 +80,10 @@ app.get("/", function (req, res) {
 // a.       , b.
 // this section of code where we respond to incoming POST http request to this URL '/create-item'
 app.post("/create-item", function (req, res) {
-  db.collection("items").insertOne({ text: req.body.text}, function (err, info) {
+  db.collection("items").insertOne({ text: req.body.text }, function (
+    err,
+    info
+  ) {
     // json-javascript object notation - a very popular way to send data back and forward. And our goal here is to: send back a JS Obj that represents the new mongo DB document that was just created
     res.json(info.ops[0])
   })
@@ -87,7 +95,8 @@ app.post("/update-item", function (req, res) {
     { $set: { text: req.body.text } },
     function () {
       res.send("Success")
-    })
+    }
+  )
 })
 
 app.post("/delete-item", function (req, res) {
