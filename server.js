@@ -31,6 +31,8 @@ function passwordProtected(req, res, next) {
   }
 }
 
+app.use(passwordProtected)
+
 // tell our app to begin listening for incoming requests
 // 2nd argument should be a function that runs when this request happens
 // annonymus function
