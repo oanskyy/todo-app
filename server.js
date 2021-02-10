@@ -1,5 +1,6 @@
 let express = require("express")
 let mongodb = require("mongodb")
+let sanitizeHTML = require("sanitize-html")
 
 let app = express()
 let db
@@ -82,6 +83,7 @@ app.get("/", function (req, res) {
 // a.       , b.
 // this section of code where we respond to incoming POST http request to this URL '/create-item'
 app.post("/create-item", function (req, res) {
+  let safeText = sanitizeHTML(req.body.text, {allowedTags: [], allowedAttributes: {} )
   db.collection("items").insertOne({ text: req.body.text }, function (
     err,
     info
@@ -92,9 +94,10 @@ app.post("/create-item", function (req, res) {
 })
 
 app.post("/update-item", function (req, res) {
+  let safeText = sanutizeHTML(req.body.text, {allowedTags: [], allowedAttributes: {}})
   db.collection("items").findOneAndUpdate(
     { _id: new mongodb.ObjectId(req.body.id) },
-    { $set: { text: req.body.text } },
+    { $set: { text: safeText } },
     function () {
       res.send("Success")
     }
